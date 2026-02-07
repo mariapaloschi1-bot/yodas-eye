@@ -1,9 +1,9 @@
 /**
  * Worker Reverse Proxy per yodaseo.club
  * 
- * Configurazione:
- * - Public Domain: yodaseo.club (Gestito dal Worker)
- * - Upstream Origin: yodas-eye.pages.dev (Dove risiede l'app reale)
+ * FIX SSL & HOST:
+ * - Gestisce correttamente SNI e Host header per Cloudflare Pages.
+ * - Risolve problemi di routing dell'upstream.
  */
 
 const UPSTREAM_ORIGIN = "https://yodas-eye.pages.dev";
@@ -24,29 +24,29 @@ export default {
     const url = new URL(request.url);
     const upstream = new URL(UPSTREAM_ORIGIN);
 
-    // Mantiene il percorso e la query string originali
+    // 1. Replica percorso e query string
     upstream.pathname = url.pathname;
     upstream.search = url.search;
 
-    // Clona gli header della richiesta originale
+    // 2. Clona gli header originali
     const headers = new Headers(request.headers);
     
-    // Rimuove gli header hop-by-hop che non devono essere inoltrati
+    // 3. Rimuove header hop-by-hop (non necessari per il proxy)
     for (const h of HOP_BY_HOP) headers.delete(h);
 
-    // Imposta gli header standard per indicare all'upstream che è dietro un proxy
-    // Qui 'url.hostname' sarà 'yodaseo.club'
+    // 4. FIX CRITICO: Sovrascrivi l'header 'Host'
+    // La richiesta originale ha Host: yodaseo.club.
+    // L'upstream (Pages) si aspetta Host: yodas-eye.pages.dev.
+    // Se non lo cambiamo, Pages rifiuterà la connessione (404 o 522).
+    headers.set("Host", upstream.hostname);
+
+    // 5. Header informativi per l'applicazione
     headers.set("X-Forwarded-Host", url.hostname);
     headers.set("X-Forwarded-Proto", "https");
     
-    // (Opzionale) Inoltra l'IP reale del visitatore
     const ip = request.headers.get("CF-Connecting-IP");
     if (ip) headers.set("X-Forwarded-For", ip);
 
-    // IMPORTANTE: Non impostiamo manualmente l'header 'Host'.
-    // Fetch userà automaticamente l'hostname di UPSTREAM_ORIGIN (yodas-eye.pages.dev)
-    // per la connessione SSL/SNI, evitando l'errore "Privacy Error".
-    
     const method = request.method.toUpperCase();
     const hasBody = !["GET", "HEAD"].includes(method);
 
@@ -60,7 +60,7 @@ export default {
     try {
       const resp = await fetch(newRequest);
 
-      // Pulisce gli header della risposta
+      // Pulisce header risposta
       const respHeaders = new Headers(resp.headers);
       for (const h of HOP_BY_HOP) respHeaders.delete(h);
 
