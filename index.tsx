@@ -1,12 +1,3 @@
-
-import { bootstrapApplication } from '@angular/platform-browser';
-import { provideZonelessChangeDetection } from '@angular/core';
-import { AppComponent } from './src/app.component';
-
-bootstrapApplication(AppComponent, {
-  providers: [
-    provideZonelessChangeDetection()
-  ]
-}).catch(err => console.error(err));
-
 // AI Studio always uses an `index.tsx` file for all project types.
+// The Angular application bootstrap logic has been moved to src/main.ts,
+// which is the correct entry point for the Angular CLI build process.
