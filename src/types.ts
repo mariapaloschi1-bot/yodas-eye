@@ -1,4 +1,3 @@
-
 export interface Article {
   url: string;
   title: string;
@@ -26,19 +25,7 @@ export interface ArticleDetail {
 export interface ThemeCluster {
   theme: string;
   by_brand: Record<string, { count: number; pct: number }>;
-  // Drilldown limitato e semplificato
   drilldown_articles: Record<string, ArticleDetail[]>;
-}
-
-export interface MatrixRow {
-  dimension_value: string;
-  by_brand: Record<string, { count: number; pct_within_brand: number }>;
-  // RIMOSSO DRILLDOWN PER RISPARMIO TOKEN
-}
-
-export interface MatrixGroup {
-  theme: string;
-  rows: MatrixRow[];
 }
 
 export interface GapAnalysis {
@@ -63,12 +50,6 @@ export interface Opportunity {
 
 export interface DepthMetrics {
   note: string;
-}
-
-export interface DistributionItem {
-  format?: string;
-  intent?: string;
-  by_brand: Record<string, { count: number; pct: number }>;
 }
 
 export interface PillarCandidate {
@@ -100,12 +81,7 @@ export interface AnalysisResult {
     themes: ThemeCluster[];
     key_insights: string[];
   };
-  tab3_dual_clustering: {
-    dimension_x: string;
-    dimension_y: string;
-    matrix: MatrixGroup[];
-    key_insights: string[];
-  } | null; // OPZIONALE - RIMOSSO PER OTTIMIZZAZIONE
+  tab3_dual_clustering: null;
   tab4_depth_and_format: {
     depth_metrics: DepthMetrics;
     pillar_candidates: Record<string, PillarCandidate[]>;
