@@ -21,11 +21,9 @@ import { TabGapComponent } from './tab-gap.component';
   ],
   template: `
     <div class="h-full flex flex-col bg-slate-900 text-slate-200 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]">
-      <!-- Header -->
       <header class="bg-slate-800 border-b border-teal-900/50 px-4 py-2 md:px-6 md:py-3 flex flex-col md:flex-row items-center justify-between shrink-0 z-20 shadow-[0_4px_20px_rgba(0,0,0,0.5)] gap-3">
         <div class="flex flex-col md:flex-row items-center gap-3 text-center md:text-left">
           <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-teal-500/50 overflow-hidden shadow-[0_0_10px_rgba(45,212,191,0.3)] shrink-0">
-             <!-- RIPRISTINATA IMMAGINE FUNZIONANTE -->
              <img src="https://www.shutterstock.com/image-vector/baby-yoda-grogu-cartoon-character-260nw-2293123629.jpg" class="w-full h-full object-cover">
           </div>
           
@@ -51,7 +49,6 @@ import { TabGapComponent } from './tab-gap.component';
         </div>
       </header>
 
-      <!-- Tabs Navigation -->
       <div class="bg-slate-800 border-b border-teal-900/30 px-4 md:px-6 flex gap-4 md:gap-8 shrink-0 overflow-x-auto no-scrollbar">
         @for (tab of tabs; track tab.id) {
           <button 
@@ -69,7 +66,6 @@ import { TabGapComponent } from './tab-gap.component';
         }
       </div>
 
-      <!-- Tab Content Area -->
       <main class="flex-1 overflow-auto p-4 md:p-6 custom-scrollbar relative">
         <div class="max-w-[1600px] mx-auto pb-12">
           @switch (activeTab()) {
