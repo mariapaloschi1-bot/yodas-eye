@@ -7,7 +7,6 @@ import { AnalysisResult } from '../types';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <!-- Insights Box (SOPRA la tabella come richiesto) -->
     <div class="bg-slate-800/80 rounded-xl border border-slate-700 p-6 mb-8 shadow-lg">
       <h3 class="flex items-center gap-2 text-teal-400 font-bold mb-4">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
@@ -26,11 +25,9 @@ import { AnalysisResult } from '../types';
       </div>
     </div>
 
-    <!-- Cluster List -->
     <div class="space-y-6">
       @for (cluster of data.themes; track cluster.theme) {
         <div class="bg-slate-800 rounded-xl border border-slate-700 shadow-md overflow-hidden hover:border-teal-500/30 transition duration-300">
-          <!-- Cluster Header -->
           <div 
             class="px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-700/50 transition select-none"
             (click)="toggle(cluster.theme)"
@@ -43,7 +40,6 @@ import { AnalysisResult } from '../types';
             </div>
             
             <div class="flex items-center gap-6">
-              <!-- Mini Bar Chart -->
               <div class="flex gap-1 h-2 w-32 bg-slate-900 rounded-full p-0.5">
                  @for (brand of getBrands(cluster); track brand) {
                    <div 
@@ -65,7 +61,6 @@ import { AnalysisResult } from '../types';
             </div>
           </div>
 
-          <!-- Drilldown -->
           @if (isExpanded(cluster.theme)) {
             <div class="border-t border-slate-700 bg-slate-900/50 p-6">
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -76,10 +71,10 @@ import { AnalysisResult } from '../types';
                         <span class="text-slate-600">{{ cluster.drilldown_articles[brand]?.length || 0 }} art.</span>
                      </h4>
                      <ul class="space-y-3">
-                        @for (article of cluster.drilldown_articles[brand]; track article.url) {
+                        @for (article of cluster.drilldown_articles[brand]; track article.title) {
                           <li class="group">
-                             <a [href]="article.url" target="_blank" class="block">
-                               <div class="text-sm font-medium text-teal-400 group-hover:underline truncate group-hover:text-teal-300 transition" [title]="article.title">
+                             <div class="block">
+                               <div class="text-sm font-medium text-slate-300 truncate" [title]="article.title">
                                   {{ article.title }}
                                </div>
                                <div class="flex gap-2 mt-1">
@@ -90,7 +85,7 @@ import { AnalysisResult } from '../types';
                                     {{ article.intent }}
                                   </span>
                                </div>
-                             </a>
+                             </div>
                           </li>
                         }
                         @if (!cluster.drilldown_articles[brand]?.length) {
