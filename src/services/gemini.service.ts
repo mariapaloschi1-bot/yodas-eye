@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GoogleGenAI, Type, Schema } from '@google/genai';
+import { GoogleGenAI, Type, Schema, GenerateContentResponse } from '@google/genai';
 import type { BrandInput, AnalysisResult } from '../types';
 import { parseJsonSafely, retryWithBackoff } from './api-utils';
 
@@ -111,24 +111,21 @@ Regole:
 Output JSON come da schema.
 `;
 
-    const modelConfig1 = {
-      model: 'gemini-2.5-flash',
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: schemaPhase1,
-        temperature: 0.1,
-        maxOutputTokens: 8192
-      }
-    };
-
-    const rawResponse1 = await retryWithBackoff(() =>
+    console.log("FASE 1: Overview & Gaps...");
+    const rawResponse1 = await retryWithBackoff<GenerateContentResponse>(() =>
       genai.models.generateContent({
-        ...modelConfig1,
-        contents: promptPhase1
+        model: 'gemini-2.5-flash',
+        contents: promptPhase1,
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: schemaPhase1,
+          temperature: 0.1,
+          maxOutputTokens: 8192
+        }
       })
     );
 
-    const phase1Data = parseJsonSafely(rawResponse1) as any;
+    const phase1Data = parseJsonSafely<any>(rawResponse1.text || '{}');
 
     // Phase 2 - Theme Clustering (stats + delta only)
     const schemaPhase2: Schema = {
@@ -189,24 +186,21 @@ NO drilldown articoli, SOLO statistiche + delta.
 Output JSON come da schema.
 `;
 
-    const modelConfig2 = {
-      model: 'gemini-2.5-flash',
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: schemaPhase2,
-        temperature: 0.1,
-        maxOutputTokens: 8192
-      }
-    };
-
-    const rawResponse2 = await retryWithBackoff(() =>
+    console.log("FASE 2: Clustering...");
+    const rawResponse2 = await retryWithBackoff<GenerateContentResponse>(() =>
       genai.models.generateContent({
-        ...modelConfig2,
-        contents: promptPhase2
+        model: 'gemini-2.5-flash',
+        contents: promptPhase2,
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: schemaPhase2,
+          temperature: 0.1,
+          maxOutputTokens: 8192
+        }
       })
     );
 
-    const phase2Data = parseJsonSafely(rawResponse2) as any;
+    const phase2Data = parseJsonSafely<any>(rawResponse2.text || '{}');
 
     // Phase 3 - Matrix (Theme × Intent) - numbers only
     const schemaPhase3: Schema = {
@@ -247,24 +241,21 @@ Genera una matrice Tema × Intent (o Formato):
 Output JSON come da schema.
 `;
 
-    const modelConfig3 = {
-      model: 'gemini-2.5-flash',
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: schemaPhase3,
-        temperature: 0.1,
-        maxOutputTokens: 8192
-      }
-    };
-
-    const rawResponse3 = await retryWithBackoff(() =>
+    console.log("FASE 3: Matrice...");
+    const rawResponse3 = await retryWithBackoff<GenerateContentResponse>(() =>
       genai.models.generateContent({
-        ...modelConfig3,
-        contents: promptPhase3
+        model: 'gemini-2.5-flash',
+        contents: promptPhase3,
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: schemaPhase3,
+          temperature: 0.1,
+          maxOutputTokens: 8192
+        }
       })
     );
 
-    const phase3Data = parseJsonSafely(rawResponse3) as any;
+    const phase3Data = parseJsonSafely<any>(rawResponse3.text || '{}');
 
     // Phase 4 - Pillar Content (5-7 candidates per brand)
     const schemaPhase4: Schema = {
@@ -331,24 +322,21 @@ Genera:
 Output JSON come da schema.
 `;
 
-    const modelConfig4 = {
-      model: 'gemini-2.5-flash',
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: schemaPhase4,
-        temperature: 0.1,
-        maxOutputTokens: 8192
-      }
-    };
-
-    const rawResponse4 = await retryWithBackoff(() =>
+    console.log("FASE 4: Pillar & Gaps...");
+    const rawResponse4 = await retryWithBackoff<GenerateContentResponse>(() =>
       genai.models.generateContent({
-        ...modelConfig4,
-        contents: promptPhase4
+        model: 'gemini-2.5-flash',
+        contents: promptPhase4,
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: schemaPhase4,
+          temperature: 0.1,
+          maxOutputTokens: 8192
+        }
       })
     );
 
-    const phase4Data = parseJsonSafely(rawResponse4) as any;
+    const phase4Data = parseJsonSafely<any>(rawResponse4.text || '{}');
 
     // Merge all phases
     const finalResult: AnalysisResult = {
@@ -356,7 +344,7 @@ Output JSON come da schema.
         focus_brand: focusBrand,
         brands: brands.map(b => b.name),
         article_counts: Object.fromEntries(brands.map(b => [b.name, b.articles.length])),
-        second_dimension_used: phase3Data.tab3_dual_clustering.second_dimension_used || 'Intent'
+        second_dimension_used: phase3Data.tab3_dual_clustering?.second_dimension_used || 'Intent'
       },
       tab1_overview: phase1Data.tab1_overview,
       tab2_theme_clustering: phase2Data.tab2_theme_clustering,
