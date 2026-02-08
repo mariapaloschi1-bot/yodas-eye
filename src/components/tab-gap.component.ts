@@ -86,7 +86,7 @@ import type { AnalysisResult } from '../types';
             <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border-2 border-purple-700/50 overflow-hidden hover:border-purple-500 transition">
               <div class="bg-purple-900/30 px-6 py-3 border-b border-purple-700/50 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                  <span class="text-2xl font-bold text-purple-400">#{opp.rank}</span>
+                  <span class="text-2xl font-bold text-purple-400">#{{ opp.rank }}</span>
                   <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-600 text-white uppercase">
                     {{ opp.type }}
                   </span>
@@ -134,7 +134,7 @@ import type { AnalysisResult } from '../types';
                        }
                      </ul>
                   </div>
-               }
+                }
               </div>
             </div>
           }
