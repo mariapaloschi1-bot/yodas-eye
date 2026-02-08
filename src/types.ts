@@ -105,7 +105,7 @@ export interface AnalysisResult {
     dimension_y: string;
     matrix: MatrixGroup[];
     key_insights: string[];
-  };
+  } | null; // OPZIONALE - RIMOSSO PER OTTIMIZZAZIONE
   tab4_depth_and_format: {
     depth_metrics: DepthMetrics;
     pillar_candidates: Record<string, PillarCandidate[]>;
