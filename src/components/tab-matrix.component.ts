@@ -1,37 +1,37 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AnalysisResult, MatrixRow } from '../types';
+import type { AnalysisResult } from '../types';
 
 @Component({
   selector: 'app-tab-matrix',
   standalone: true,
   imports: [CommonModule],
   template: `
-    <!-- 3 Box Insights (Saggezza Tattica) - SOPRA LA TABELLA -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-       @for (insight of data.key_insights; track $index) {
-         <div class="bg-slate-800/80 p-6 rounded-xl border border-slate-700 border-t-4 shadow-lg"
-              [class.border-t-teal-500]="$index === 0"
-              [class.border-t-amber-500]="$index === 1"
-              [class.border-t-purple-500]="$index >= 2">
-            <h4 class="text-xs font-bold uppercase tracking-widest mb-3"
-                [class.text-teal-400]="$index === 0"
-                [class.text-amber-400]="$index === 1"
-                [class.text-purple-400]="$index >= 2">
-                Saggezza Tattica #{{ $index + 1 }}
-            </h4>
-            <p class="text-slate-300 text-sm leading-relaxed italic">"{{ insight }}"</p>
-         </div>
-       }
-       @if (!data.key_insights || data.key_insights.length === 0) {
-          <div class="col-span-3 text-center text-slate-500 py-4 italic">Nessun insight tattico rilevato in questa griglia.</div>
-       }
-    </div>
+    <div class="space-y-8">
+      <!-- Insights -->
+      @if (data.key_insights && data.key_insights.length > 0) {
+        <section class="bg-gradient-to-br from-purple-900/20 to-teal-900/20 border border-purple-700/50 rounded-xl p-6">
+          <h3 class="text-lg font-bold text-purple-400 mb-4 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            Saggezza Jedi sulla Matrice
+          </h3>
+          <ul class="space-y-2">
+            @for (insight of data.key_insights; track insight) {
+              <li class="flex items-start gap-2 text-slate-300">
+                <span class="text-teal-500 mt-1">✦</span>
+                <span class="flex-1">{{ insight }}</span>
+              </li>
+            }
+          </ul>
+        </section>
+      }
 
     <!-- Matrix Table (Heatmap Only) -->
     <div class="bg-slate-800 rounded-xl shadow-lg border border-slate-700 overflow-hidden mb-8">
       <div class="px-6 py-4 border-b border-slate-700 bg-slate-800 flex justify-between items-center">
-        <h3 class="font-bold text-teal-400 tracking-wide">Matrice della Forza: Tema vs {{ data.dimension_y }}</h3>
+        <h3 class="font-bold text-teal-400 tracking-wide">Matrice della Forza: Tema vs {{ data.second_dimension_used }}</h3>
         <span class="text-xs text-slate-500 italic">
            Mappa di calore (Dati puri)
         </span>
@@ -41,7 +41,7 @@ import { AnalysisResult, MatrixRow } from '../types';
         <table class="w-full text-sm">
            <thead class="bg-slate-900/50 text-xs text-slate-400 uppercase">
              <tr>
-               <th class="px-4 py-3 text-left w-48">Tema / {{ data.dimension_y }}</th>
+               <th class="px-4 py-3 text-left w-48">Tema / {{ data.second_dimension_used }}</th>
                @for (col of getColumns(); track col) {
                  <th class="px-4 py-3 text-center min-w-[120px]">{{ col }}</th>
                }
@@ -57,19 +57,16 @@ import { AnalysisResult, MatrixRow } from '../types';
                           <div class="h-full w-full flex flex-col gap-1 p-2 rounded hover:bg-slate-700/30 transition">
                              @for (brand of getBrands(row.by_brand); track brand) {
                                <div class="flex items-center gap-2 text-xs">
-                                  <div class="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                                    <div 
-                                      class="h-full rounded-full shadow-[0_0_5px_rgba(255,255,255,0.3)]" 
-                                      [class.bg-teal-500]="true" 
-                                      [style.width.%]="normalizePct(row.by_brand[brand].count)">
-                                    </div>
-                                  </div>
-                                  <span class="w-4 text-right text-[10px] text-slate-500">{{ row.by_brand[brand].count }}</span>
+                                  <span class="font-medium text-slate-400">{{ brand }}:</span>
+                                  <span class="font-bold text-teal-400">{{ row.by_brand[brand].count }}</span>
+                                  <span class="text-slate-500">({{ row.by_brand[brand].pct }}%)</span>
                                </div>
                              }
                           </div>
                        } @else {
-                         <div class="text-center text-slate-600">-</div>
+                          <div class="h-full w-full p-2 text-center">
+                             <span class="text-slate-600 text-xs">—</span>
+                          </div>
                        }
                     </td>
                  }
@@ -79,27 +76,27 @@ import { AnalysisResult, MatrixRow } from '../types';
         </table>
       </div>
     </div>
-  `
+    </div>
+  `,
 })
 export class TabMatrixComponent {
   @Input({ required: true }) data!: AnalysisResult['tab3_dual_clustering'];
-  
-  getColumns() {
-    const all = new Set<string>();
-    this.data.matrix.forEach(g => g.rows.forEach(r => all.add(r.dimension_value)));
-    return Array.from(all).sort();
+
+  getColumns(): string[] {
+    const cols = new Set<string>();
+    for (const group of this.data.matrix) {
+      for (const row of group.rows) {
+        cols.add(row.dimension_value);
+      }
+    }
+    return Array.from(cols);
   }
 
-  getRow(rows: MatrixRow[], val: string) {
-    return rows.find(r => r.dimension_value === val);
+  getRow(rows: any[], dimensionValue: string) {
+    return rows.find(r => r.dimension_value === dimensionValue);
   }
 
-  getBrands(obj: any) {
-    return obj ? Object.keys(obj) : [];
-  }
-
-  normalizePct(count: number) {
-    // Normalizza visivamente la barra (max 10 articoli come riferimento per il 100%)
-    return Math.min(100, (count / 10) * 100);
+  getBrands(byBrand: Record<string, any>): string[] {
+    return Object.keys(byBrand);
   }
 }
