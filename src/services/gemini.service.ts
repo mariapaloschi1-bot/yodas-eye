@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GoogleGenAI, Schema, Type } from '@google/genai';
+import { GoogleGenAI, Type, Schema } from '@google/genai';
 import type { BrandInput, AnalysisResult } from '../types';
 import { parseJsonSafely, retryWithBackoff } from './api-utils';
 
@@ -11,7 +11,7 @@ export class GeminiService {
       throw new Error('API Key mancante. Inserisci la tua Gemini API Key nel form.');
     }
 
-    const genai = new GoogleGenAI(apiKey);
+    const genai = new GoogleGenAI({ apiKey: apiKey });
 
     // Build compact input dataset
     const fullBrands = brands.map(b => ({
@@ -128,7 +128,7 @@ Output JSON come da schema.
       })
     );
 
-    const phase1Data = parseJsonSafely(rawResponse1);
+    const phase1Data = parseJsonSafely(rawResponse1) as any;
 
     // Phase 2 - Theme Clustering (stats + delta only)
     const schemaPhase2: Schema = {
@@ -206,7 +206,7 @@ Output JSON come da schema.
       })
     );
 
-    const phase2Data = parseJsonSafely(rawResponse2);
+    const phase2Data = parseJsonSafely(rawResponse2) as any;
 
     // Phase 3 - Matrix (Theme × Intent) - numbers only
     const schemaPhase3: Schema = {
@@ -264,7 +264,7 @@ Output JSON come da schema.
       })
     );
 
-    const phase3Data = parseJsonSafely(rawResponse3);
+    const phase3Data = parseJsonSafely(rawResponse3) as any;
 
     // Phase 4 - Pillar Content (5-7 candidates per brand)
     const schemaPhase4: Schema = {
@@ -348,7 +348,7 @@ Output JSON come da schema.
       })
     );
 
-    const phase4Data = parseJsonSafely(rawResponse4);
+    const phase4Data = parseJsonSafely(rawResponse4) as any;
 
     // Merge all phases
     const finalResult: AnalysisResult = {
