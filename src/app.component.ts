@@ -134,4 +134,27 @@ export class AppComponent implements OnDestroy {
     if (this.stepInterval) clearInterval(this.stepInterval);
   }
 
-  handleAnal
+  handleAnalyze(event: { apiKey: string, focusBrand: string, brands: BrandInput[] }) {
+    this.state.set('loading');
+    this.startLoadingSequence();
+
+    this.geminiService.analyzeContent(event.apiKey, event.focusBrand, event.brands)
+      .then(result => {
+        this.result = result;
+        this.state.set('dashboard');
+        this.stopTimers();
+      })
+      .catch(error => {
+        console.error(error);
+        this.errorMessage.set(error.message || "Errore sconosciuto durante l'analisi.");
+        this.state.set('error');
+        this.stopTimers();
+      });
+  }
+
+  resetState() {
+    this.state.set('input');
+    this.result = null;
+    this.errorMessage.set('');
+  }
+}
