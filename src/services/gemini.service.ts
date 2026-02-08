@@ -143,7 +143,7 @@ export class GeminiService {
     await new Promise(r => setTimeout(r, 1500));
 
     // ==========================================================================================
-    // FASE 2: CLUSTERING - LIMITATO A 3 ESEMPI TOTALI PER TEMA
+    // FASE 2: CLUSTERING - LIMITATO A 2 ESEMPI TOTALI PER TEMA
     // ==========================================================================================
 
     const schemaPhase2: Schema = {
@@ -290,16 +290,6 @@ export class GeminiService {
         });
     }
 
-    if (data3.tab3_dual_clustering?.matrix) {
-        data3.tab3_dual_clustering.matrix.forEach((group: any) => {
-            if (group.rows) {
-                group.rows.forEach((row: any) => {
-                    row.by_brand = listToMap(row.by_brand_list, 'brand', i => ({ count: i.count, pct_within_brand: i.pct_within_brand }));
-                });
-            }
-        });
-    }
-
     let pillar_candidates: any = {};
     if (data4.tab4_depth_and_format?.pillar_candidates_list) {
         pillar_candidates = listToMap(data4.tab4_depth_and_format.pillar_candidates_list, 'brand', i => i.candidates);
@@ -314,7 +304,7 @@ export class GeminiService {
       },
       tab1_overview: data1.tab1_overview,
       tab2_theme_clustering: data2.tab2_theme_clustering,
-      tab3_dual_clustering: null, // RIMOSSO PER OTTIMIZZAZIONE
+      tab3_dual_clustering: null,
       tab4_depth_and_format: {
           ...data4.tab4_depth_and_format,
           pillar_candidates: pillar_candidates,
