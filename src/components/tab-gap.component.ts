@@ -9,7 +9,6 @@ import { AnalysisResult } from '../types';
   template: `
     <div class="space-y-12 pb-12">
       
-      <!-- Insights Box (Saggezza Jedi) -->
       <div class="bg-slate-800/80 rounded-xl border border-slate-700 p-6 shadow-lg">
         <h3 class="flex items-center gap-2 text-teal-400 font-bold mb-4">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" /></svg>
@@ -28,7 +27,6 @@ import { AnalysisResult } from '../types';
         </div>
       </div>
 
-      <!-- Prioritized Opportunities -->
       <section>
         <div class="flex items-center gap-3 mb-6">
             <span class="bg-teal-900/50 text-teal-400 p-2 rounded-lg shadow-md border border-teal-500/30">
@@ -40,13 +38,11 @@ import { AnalysisResult } from '../types';
         <div class="grid grid-cols-1 gap-6">
           @for (opp of data.prioritized_opportunities; track opp.rank) {
             <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden hover:border-teal-500/50 transition duration-300 shadow-lg relative group">
-               <!-- Rank Badge -->
                <div class="absolute top-0 right-0 bg-slate-700 text-teal-400 text-xs font-bold px-3 py-1 rounded-bl-xl border-b border-l border-slate-600 z-10">
                  Priorità #{{ opp.rank }}
                </div>
                
                <div class="p-6 md:p-8 flex flex-col md:flex-row gap-8">
-                  <!-- Left: Core Info -->
                   <div class="flex-1">
                      <div class="flex items-center gap-3 mb-3">
                         <span class="px-2 py-1 bg-teal-900/40 text-teal-300 rounded text-[10px] uppercase font-bold tracking-widest border border-teal-500/20">
@@ -74,19 +70,18 @@ import { AnalysisResult } from '../types';
                      </div>
                   </div>
 
-                  <!-- Right: Proof & Examples -->
                   <div class="md:w-1/3 bg-slate-900/50 rounded-xl p-5 border border-slate-700/50">
                      <h5 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                         Osservati nel Nemico:
                      </h5>
                      <ul class="space-y-3">
-                       @for (proof of opp.proof_points; track proof.url) {
+                       @for (proof of opp.proof_points; track proof.title) {
                          <li>
-                           <a [href]="proof.url" target="_blank" class="block group/link">
+                           <div class="block">
                              <div class="text-xs font-bold text-red-400 mb-0.5 whitespace-normal">{{ proof.brand }}</div>
-                             <div class="text-sm text-teal-500 group-hover/link:underline whitespace-normal leading-tight">{{ proof.title }}</div>
-                           </a>
+                             <div class="text-sm text-slate-300 whitespace-normal leading-tight">{{ proof.title }}</div>
+                           </div>
                          </li>
                        }
                      </ul>
@@ -97,7 +92,6 @@ import { AnalysisResult } from '../types';
         </div>
       </section>
 
-      <!-- Detailed Gaps Table/List -->
       <section>
          <div class="flex items-center gap-3 mb-6">
             <span class="bg-red-900/30 text-red-400 p-2 rounded-lg shadow-md border border-red-500/30">
