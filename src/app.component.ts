@@ -148,10 +148,10 @@ export class AppComponent implements OnDestroy {
   private stepInterval: any;
 
   private loadingSteps = [
-    "Fase 1: Analisi Strategica (Gaps & Overview)...",
-    "Fase 2: Scansione Profonda dei Cluster...",
-    "Fase 3: Calcolo Matrice Tattica...",
-    "Fase 4: Identificazione Pillar Content...",
+    "Lento? Solo Saggio...",
+    "Fretta, nemica è...",
+    "La Forza lavora...",
+    "Attendere tu devi...",
     "Unificando gli Holocron..."
   ];
 
