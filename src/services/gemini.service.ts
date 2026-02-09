@@ -28,17 +28,17 @@ export class GeminiService {
       Il tuo compito è analizzare i dati forniti e restituire saggezza strategica.
 
       TONO E STILE (IMPORTANTE):
-      - Parla come Yoda: "Analizzare i dati io devo", "Grande confusione nel brand c'è".
+      - Parla come Yoda SOLO nei campi: rationale, why, note, why_it_matters, reason
+      - Gli INSIGHTS devono essere scritti in italiano normale, professionale, dettagliato (~250 parole ciascuno)
       - Usa metafore di Star Wars: "Il Lato Oscuro (competitors)", "La Forza (punti di forza)", "Giovane Padawan (utente)".
-      - Lingua: ITALIANO (Stile Yoda).
-      - Colore emotivo: Saggio, criptico ma utile, autorevole.
+      - Lingua: ITALIANO.
 
       Compiti di Analisi:
       1. Clustering temi: Raggruppa gli articoli per argomenti (MAX 10 TEMI).
       2. Share of Voice: Chi domina la galassia dei contenuti?
       3. Gap Analysis: Dove manca la Forza nel brand dell'utente? (MAX 2 GAPS).
       4. Opportunità: Quali nuovi sentieri esplorare? (MAX 4 OPPORTUNITÀ).
-      5. Pillar Content: Identifica i 2 articoli pillar per ogni brand.
+      5. Pillar Content: Identifica i 3 articoli pillar più forti per ogni brand (focus incluso).
       
       INPUT DATI:
       Padawan Brand (Focus): ${focusBrand}
@@ -47,14 +47,15 @@ export class GeminiService {
 
       REGOLE OUTPUT JSON:
       - Restituisci SOLO JSON valido.
-      - I campi testuali (insight, rationale, why, note) DEVONO ESSERE SCRITTI COME YODA.
+      - **Insights**: Scritti in italiano professionale, dettagliati, circa 250 parole ciascuno, con analisi approfondita.
+      - **Altri campi testuali** (rationale, why, note, why_it_matters, reason): DEVONO ESSERE SCRITTI COME YODA.
       - **Limiti per evitare overflow**:
         * MAX 10 TEMI nella theme_share_table
-        * MAX 2 articoli drilldown per tema (SOLO competitor, NON focus brand)
+        * MAX 2 articoli drilldown per tema per OGNI brand (INCLUSO il focus brand)
         * MAX 2 GAPS in theme_gaps
         * MAX 4 OPPORTUNITÀ in prioritized_opportunities
-        * MAX 3 insights per sezione
-        * Testi brevi e concisi (max 150 caratteri per insight)
+        * 3 insights per sezione (ogni insight ~250 parole)
+        * 3 pillar per brand (invece di 2)
 
       SCHEMA JSON OBBLIGATORIO:
       {
@@ -83,7 +84,11 @@ export class GeminiService {
             "overexposed": [{ "theme": "", "focus_pct": 0.0, "competitor_avg_pct": 0.0, "note": "Yoda note..." }],
             "underexposed": [{ "theme": "", "focus_pct": 0.0, "competitor_avg_pct": 0.0, "note": "Yoda note..." }]
           },
-          "key_insights": ["Yoda: Insight 1...", "Yoda: Insight 2...", "Yoda: Insight 3..."]
+          "key_insights": [
+            "Insight professionale dettagliato di circa 250 parole che analizza in profondità i pattern emersi dall'analisi, fornendo contesto, implicazioni strategiche e raccomandazioni concrete basate sui dati osservati...",
+            "Secondo insight professionale...",
+            "Terzo insight professionale..."
+          ]
         },
         "tab2_theme_clustering": {
           "themes": [
@@ -101,7 +106,11 @@ export class GeminiService {
               }
             }
           ],
-          "key_insights": ["Yoda insight 1", "Yoda insight 2", "Yoda insight 3"]
+          "key_insights": [
+            "Insight professionale dettagliato di circa 250 parole sui cluster tematici...",
+            "Secondo insight...",
+            "Terzo insight..."
+          ]
         },
         "tab3_dual_clustering": null,
         "tab4_depth_and_format": {
@@ -111,10 +120,15 @@ export class GeminiService {
           "pillar_candidates": {
             "BRAND": [
               { "url": "", "title": "", "reason": "Yoda: Perché pillar questo articolo è..." },
+              { "url": "", "title": "", "reason": "Yoda: Perché pillar questo articolo è..." },
               { "url": "", "title": "", "reason": "Yoda: Perché pillar questo articolo è..." }
             ]
           },
-          "key_insights": ["Yoda pillar insight 1", "Yoda pillar insight 2"]
+          "key_insights": [
+            "Insight professionale dettagliato di circa 250 parole sui contenuti pillar...",
+            "Secondo insight...",
+            "Terzo insight..."
+          ]
         },
         "tab5_gap_analysis": {
           "theme_gaps": [
@@ -171,16 +185,20 @@ export class GeminiService {
               ]
             }
           ],
-          "key_insights": ["Yoda gap insight 1", "Yoda gap insight 2", "Yoda gap insight 3"]
+          "key_insights": [
+            "Insight professionale dettagliato di circa 250 parole sui gap e opportunità...",
+            "Secondo insight...",
+            "Terzo insight..."
+          ]
         }
       }
 
       **NOTA IMPORTANTE**:
-      - Nel drilldown_articles di tab2, includi SOLO articoli dei COMPETITOR, NON del focus brand.
-      - Mantieni MAX 2 articoli per tema per evitare output troppo grande.
-      - Pillar candidates: esattamente 2 per brand, con URL completo.
+      - Nel drilldown_articles di tab2, includi 2 articoli per OGNI brand (INCLUSO il focus brand).
+      - Pillar candidates: esattamente 3 per brand, con URL completo.
       - Gap theme_gaps: MAX 2 gaps più critici.
       - Opportunità: MAX 4 più promettenti (ordinate per rank 1-4).
+      - Insights: Scritti in italiano professionale, dettagliati, circa 250 parole ciascuno.
       - tab3_dual_clustering deve essere null (non implementato).
     `;
 
