@@ -34,10 +34,10 @@ export class GeminiService {
       - Colore emotivo: Saggio, criptico ma utile, autorevole.
 
       Compiti di Analisi:
-      1. Clustering temi: Raggruppa gli articoli per argomenti (MAX 8 TEMI).
+      1. Clustering temi: Raggruppa gli articoli per argomenti (MAX 10 TEMI).
       2. Share of Voice: Chi domina la galassia dei contenuti?
       3. Gap Analysis: Dove manca la Forza nel brand dell'utente? (MAX 2 GAPS).
-      4. Opportunità: Quali nuovi sentieri esplorare? (MAX 2 OPPORTUNITÀ).
+      4. Opportunità: Quali nuovi sentieri esplorare? (MAX 4 OPPORTUNITÀ).
       5. Pillar Content: Identifica i 2 articoli pillar per ogni brand.
       
       INPUT DATI:
@@ -49,10 +49,10 @@ export class GeminiService {
       - Restituisci SOLO JSON valido.
       - I campi testuali (insight, rationale, why, note) DEVONO ESSERE SCRITTI COME YODA.
       - **Limiti per evitare overflow**:
-        * MAX 8 TEMI nella theme_share_table
+        * MAX 10 TEMI nella theme_share_table
         * MAX 2 articoli drilldown per tema (SOLO competitor, NON focus brand)
         * MAX 2 GAPS in theme_gaps
-        * MAX 2 OPPORTUNITÀ in prioritized_opportunities
+        * MAX 4 OPPORTUNITÀ in prioritized_opportunities
         * MAX 3 insights per sezione
         * Testi brevi e concisi (max 150 caratteri per insight)
 
@@ -93,7 +93,6 @@ export class GeminiService {
               "drilldown_articles": {
                 "BRAND": [
                   {
-                    "url": "",
                     "title": "",
                     "format": "Guida|Elenco|News|Approfondimento|Comparazione",
                     "intent": "Informativo|Navigazionale|Transazionale"
@@ -104,22 +103,7 @@ export class GeminiService {
           ],
           "key_insights": ["Yoda insight 1", "Yoda insight 2", "Yoda insight 3"]
         },
-        "tab3_dual_clustering": {
-          "dimension_x": "theme",
-          "dimension_y": "intent",
-          "matrix": [
-            {
-              "theme": "",
-              "rows": [
-                {
-                  "dimension_value": "Informativo|Navigazionale|Transazionale",
-                  "by_brand": { "BRAND": { "count": 0, "pct_within_brand": 0.0 } }
-                }
-              ]
-            }
-          ],
-          "key_insights": ["Yoda insight tattico 1", "Yoda insight tattico 2"]
-        },
+        "tab3_dual_clustering": null,
         "tab4_depth_and_format": {
           "depth_metrics": { 
             "note": "Yoda: Dai dati attuali, profondità stimare non posso. Titoli solo ho ricevuto."
@@ -153,7 +137,37 @@ export class GeminiService {
               "why_it_matters": "Yoda: Perché importante è...",
               "suggested_angles": ["Angolo 1", "Angolo 2", "Angolo 3"],
               "proof_points": [
-                { "brand": "", "url": "", "title": "" }
+                { "brand": "", "title": "" }
+              ]
+            },
+            {
+              "rank": 2,
+              "opportunity": "Titolo Opportunità",
+              "type": "Nuovo Sentiero|Espansione|Equilibrio",
+              "why_it_matters": "Yoda: Perché importante è...",
+              "suggested_angles": ["Angolo 1", "Angolo 2", "Angolo 3"],
+              "proof_points": [
+                { "brand": "", "title": "" }
+              ]
+            },
+            {
+              "rank": 3,
+              "opportunity": "Titolo Opportunità",
+              "type": "Nuovo Sentiero|Espansione|Equilibrio",
+              "why_it_matters": "Yoda: Perché importante è...",
+              "suggested_angles": ["Angolo 1", "Angolo 2", "Angolo 3"],
+              "proof_points": [
+                { "brand": "", "title": "" }
+              ]
+            },
+            {
+              "rank": 4,
+              "opportunity": "Titolo Opportunità",
+              "type": "Nuovo Sentiero|Espansione|Equilibrio",
+              "why_it_matters": "Yoda: Perché importante è...",
+              "suggested_angles": ["Angolo 1", "Angolo 2", "Angolo 3"],
+              "proof_points": [
+                { "brand": "", "title": "" }
               ]
             }
           ],
@@ -166,14 +180,15 @@ export class GeminiService {
       - Mantieni MAX 2 articoli per tema per evitare output troppo grande.
       - Pillar candidates: esattamente 2 per brand, con URL completo.
       - Gap theme_gaps: MAX 2 gaps più critici.
-      - Opportunità: MAX 2 più promettenti.
+      - Opportunità: MAX 4 più promettenti (ordinate per rank 1-4).
+      - tab3_dual_clustering deve essere null (non implementato).
     `;
 
     try {
       console.log('🔮 Inizio analisi con Gemini 2.5 Flash...');
       
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',  // ✅ MODELLO CORRETTO (stesso della versione OLD)
+        model: 'gemini-2.5-flash',
         contents: systemPrompt,
         config: {
           responseMimeType: 'application/json'
