@@ -170,14 +170,13 @@ export class GeminiService {
     `;
 
     try {
-      console.log('🔮 Inizio analisi con Gemini...');
+      console.log('🔮 Inizio analisi con Gemini 2.5 Flash...');
       
       const response = await ai.models.generateContent({
-        model: 'gemini-1.5-flash',  // ✅ MODELLO CORRETTO E STABILE
+        model: 'gemini-2.5-flash',  // ✅ MODELLO CORRETTO (stesso della versione OLD)
         contents: systemPrompt,
         config: {
           responseMimeType: 'application/json'
-          // ⚠️ NESSUN maxOutputTokens - Gemini decide autonomamente
         }
       });
       
@@ -196,7 +195,7 @@ export class GeminiService {
         throw new Error('Troppi dati generati o formato invalido. Prova con meno articoli.');
       }
       if (e.message?.includes('not found') || e.message?.includes('404')) {
-        throw new Error('Modello Gemini non disponibile. Verifica la tua API Key.');
+        throw new Error('Modello Gemini non disponibile. Verifica la tua API Key o la versione della libreria @google/genai.');
       }
       throw e;
     }
