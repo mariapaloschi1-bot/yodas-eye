@@ -84,7 +84,7 @@ import { DashboardViewComponent } from './components/dashboard-view.component';
           <div class="mb-6 px-4 py-2 bg-slate-900/50 rounded-lg border border-slate-700">
              <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Nota del Consiglio:</p>
              <p class="text-xs text-slate-400">
-               La meditazione può durare fino a <strong>qualche minuto</strong>. 
+               La meditazione può durare fino a qualche minuto. 
                La Forza scorre potente giovane Padawan, ma lenta. Non chiudere questa finestra.
              </p>
           </div>
@@ -148,10 +148,10 @@ export class AppComponent implements OnDestroy {
   private stepInterval: any;
 
   private loadingSteps = [
-    "Fase 1: Analisi Strategica (Gaps & Overview)...",
-    "Fase 2: Scansione Profonda dei Cluster...",
-    "Fase 3: Calcolo Matrice Tattica...",
-    "Fase 4: Identificazione Pillar Content...",
+    "Lento? Solo Saggio...",
+    "Fretta, nemica è...",
+    "La Forza lavora...",
+    "Attendere tu devi...",
     "Unificando gli Holocron..."
   ];
 
