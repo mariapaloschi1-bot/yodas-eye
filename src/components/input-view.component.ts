@@ -148,14 +148,6 @@ import { BrandInput, Article } from '../types';
                 </div>
               }
             </div>
-
-            <button 
-              (click)="addCompetitor()" 
-              [disabled]="competitors().length >= 2"
-              class="mt-4 w-full p-4 bg-slate-700 hover:bg-slate-600 disabled:opacity-30 disabled:cursor-not-allowed text-slate-300 rounded-xl border border-slate-600 hover:border-slate-500 transition flex items-center justify-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" /></svg>
-              Aggiungi Competitor (max 2)
-            </button>
           </div>
 
           <!-- Actions -->
