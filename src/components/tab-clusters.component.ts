@@ -13,11 +13,10 @@ import { AnalysisResult } from '../types';
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
         Saggezza sui Cluster (Jedi Insights)
       </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="space-y-4">
         @for (insight of data.key_insights; track $index) {
-          <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700/50 shadow-sm flex gap-3">
-             <span class="text-teal-500 font-bold text-lg">✦</span>
-             <p class="text-sm text-slate-300 italic">"{{ insight }}"</p>
+          <div class="bg-slate-900/50 p-5 rounded-lg border border-slate-700/50 shadow-sm border-l-4 border-l-amber-500">
+             <p class="text-sm text-slate-300 leading-relaxed whitespace-normal">{{ insight }}</p>
           </div>
         }
         @if (!data.key_insights || data.key_insights.length === 0) {
@@ -65,38 +64,49 @@ import { AnalysisResult } from '../types';
             </div>
           </div>
 
-          <!-- Drilldown -->
+          <!-- Drilldown: ARTICOLI UNO SOTTO L'ALTRO (no separazione per brand) -->
           @if (isExpanded(cluster.theme)) {
             <div class="border-t border-slate-700 bg-slate-900/50 p-6">
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div class="space-y-3">
                 @for (brand of getBrands(cluster); track brand) {
-                  <div class="bg-slate-800 rounded-lg border border-slate-700 p-4 shadow-sm">
-                     <h4 class="text-xs font-bold text-slate-500 uppercase mb-3 flex justify-between tracking-wider">
-                        {{ brand }}
-                        <span class="text-slate-600">{{ cluster.drilldown_articles[brand]?.length || 0 }} art.</span>
-                     </h4>
-                     <ul class="space-y-3">
-                        @for (article of cluster.drilldown_articles[brand]; track article.title) {
-                          <li class="group">
-                             <div class="block">
-                               <div class="text-sm font-medium text-slate-300 truncate" [title]="article.title">
-                                  {{ article.title }}
-                               </div>
-                               <div class="flex gap-2 mt-1">
-                                  <span class="text-[10px] uppercase tracking-wide bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded border border-slate-600">
-                                    {{ article.format }}
-                                  </span>
-                                  <span class="text-[10px] uppercase tracking-wide bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded border border-slate-600">
-                                    {{ article.intent }}
-                                  </span>
-                               </div>
-                             </div>
-                          </li>
-                        }
-                        @if (!cluster.drilldown_articles[brand]?.length) {
-                          <li class="text-sm text-slate-600 italic">Il vuoto qui regna.</li>
-                        }
-                     </ul>
+                  @for (article of cluster.drilldown_articles[brand]; track article.title) {
+                    <div class="bg-slate-800/80 rounded-lg border border-slate-700/50 p-4 hover:border-teal-500/30 transition group">
+                      <!-- Brand Label (piccolo badge) -->
+                      <div class="flex items-start justify-between gap-3 mb-2">
+                        <span class="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full"
+                              [class.bg-teal-500/20]="isFirst(brand)"
+                              [class.text-teal-400]="isFirst(brand)"
+                              [class.border-teal-500/30]="isFirst(brand)"
+                              [class.bg-slate-700/50]="!isFirst(brand)"
+                              [class.text-slate-400]="!isFirst(brand)"
+                              [class.border-slate-600]="!isFirst(brand)"
+                              class="border">
+                          {{ brand }}
+                        </span>
+                      </div>
+                      
+                      <!-- Titolo articolo -->
+                      <div class="text-sm font-medium text-slate-200 mb-2 leading-snug group-hover:text-teal-300 transition" [title]="article.title">
+                        {{ article.title }}
+                      </div>
+                      
+                      <!-- Format + Intent -->
+                      <div class="flex gap-2">
+                        <span class="text-[10px] uppercase tracking-wide bg-slate-700/70 text-slate-300 px-2 py-1 rounded border border-slate-600/50">
+                          {{ article.format }}
+                        </span>
+                        <span class="text-[10px] uppercase tracking-wide bg-slate-700/70 text-slate-300 px-2 py-1 rounded border border-slate-600/50">
+                          {{ article.intent }}
+                        </span>
+                      </div>
+                    </div>
+                  }
+                }
+                
+                <!-- Messaggio vuoto SOLO se nessun brand ha articoli -->
+                @if (getTotalArticles(cluster) === 0) {
+                  <div class="text-center text-slate-600 italic py-6 bg-slate-900/30 rounded-lg border border-slate-700/50">
+                    Il vuoto qui regna.
                   </div>
                 }
               </div>
@@ -132,5 +142,14 @@ export class TabClustersComponent {
   isFirst(brand: string) {
     const brands = this.getBrands(this.data.themes[0]);
     return brands[0] === brand;
+  }
+
+  // Helper per contare TOTALE articoli nel cluster
+  getTotalArticles(cluster: any): number {
+    let total = 0;
+    for (const brand of this.getBrands(cluster)) {
+      total += cluster.drilldown_articles[brand]?.length || 0;
+    }
+    return total;
   }
 }
