@@ -170,9 +170,10 @@ export class GeminiService {
     `;
 
     try {
-      console.log('🔮 CHIAMATA UNICA A GEMINI (approccio OLD)...');
+      console.log('🔮 Inizio analisi con Gemini...');
+      
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash-exp',
+        model: 'gemini-1.5-flash',  // ✅ MODELLO CORRETTO E STABILE
         contents: systemPrompt,
         config: {
           responseMimeType: 'application/json'
@@ -191,8 +192,11 @@ export class GeminiService {
       
     } catch (e: any) {
       console.error('❌ Gemini API Error:', e);
-      if (e.message?.includes('Too many')) {
-        throw new Error('Troppi dati generati o formato invalido. Prova con meno articoli o contatta il supporto.');
+      if (e.message?.includes('Too many') || e.message?.includes('troppi')) {
+        throw new Error('Troppi dati generati o formato invalido. Prova con meno articoli.');
+      }
+      if (e.message?.includes('not found') || e.message?.includes('404')) {
+        throw new Error('Modello Gemini non disponibile. Verifica la tua API Key.');
       }
       throw e;
     }
