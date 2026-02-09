@@ -67,6 +67,14 @@ import { AnalysisResult } from '../types';
           <!-- Drilldown: ARTICOLI UNO SOTTO L'ALTRO (no separazione per brand) -->
           @if (isExpanded(cluster.theme)) {
             <div class="border-t border-slate-700 bg-slate-900/50 p-6">
+              <!-- Nota Articoli Esempio -->
+              <div class="mb-4 px-4 py-2 bg-amber-900/10 border border-amber-500/20 rounded-lg">
+                <p class="text-xs text-amber-400/80 italic flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  Gli articoli mostrati sono solo <strong>esempi rappresentativi</strong> del cluster. L'analisi è stata condotta sull'intero archivio.
+                </p>
+              </div>
+              
               <div class="space-y-3">
                 @for (brand of getBrands(cluster); track brand) {
                   @for (article of cluster.drilldown_articles[brand]; track article.title) {
