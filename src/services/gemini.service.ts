@@ -21,11 +21,11 @@ export class GeminiService {
     // 2) Init GoogleGenAI (BYOK: l'API key viene dal browser, salvata in LocalStorage)
     const ai = new GoogleGenAI({ apiKey });
 
-    // 3) Prepara i dati di input (LIMITE 500 ARTICOLI per brand)
+    // 3) Prepara i dati di input (LIMITE 400 ARTICOLI per brand)
     const fullBrands = brands.map(b => ({
       name: b.name,
       count: b.articles.length,
-      articles: b.articles.slice(0, 500).map(a => ({
+      articles: b.articles.slice(0, 400).map(a => ({
         title: a.title,
         url: a.url
       }))
@@ -55,11 +55,10 @@ ${brandsJson}
   "meta": {
     "language": "it-yoda",
     "focus_brand": "${focusBrand}",
-    "brands": ["${focusBrand}", "Competitor1", "Competitor2"],
+    "brands": ["${focusBrand}", "Competitor1"],
     "article_counts": {
-      "${focusBrand}": 500,
-      "Competitor1": 500,
-      "Competitor2": 500
+      "${focusBrand}": 400,
+      "Competitor1": 400
     },
     "second_dimension_used": "intent"
   },
@@ -69,9 +68,8 @@ ${brandsJson}
         "theme": "Tema 1",
         "totals": { "all_brands_count": 150 },
         "by_brand": {
-          "${focusBrand}": { "count": 50, "pct": 33.3 },
-          "Competitor1": { "count": 50, "pct": 33.3 },
-          "Competitor2": { "count": 50, "pct": 33.3 }
+          "${focusBrand}": { "count": 50, "pct": 50 },
+          "Competitor1": { "count": 50, "pct": 50 }
         }
       }
     ],
@@ -99,8 +97,7 @@ ${brandsJson}
         "theme": "Tema 1",
         "by_brand": {
           "${focusBrand}": { "count": 50, "pct": 33.3 },
-          "Competitor1": { "count": 40, "pct": 26.7 },
-          "Competitor2": { "count": 60, "pct": 40.0 }
+          "Competitor1": { "count": 60, "pct": 40.0 }
         },
         "drilldown_articles": {
           "${focusBrand}": [
@@ -110,10 +107,6 @@ ${brandsJson}
           "Competitor1": [
             { "title": "Esempio articolo Competitor 1", "format": "listicle", "intent": "commercial" },
             { "title": "Esempio articolo Competitor 2", "format": "how-to", "intent": "informational" }
-          ],
-          "Competitor2": [
-            { "title": "Esempio articolo Competitor 1", "format": "comparativa", "intent": "commercial" },
-            { "title": "Esempio articolo Competitor 2", "format": "guida", "intent": "informational" }
           ]
         }
       }
@@ -137,10 +130,6 @@ ${brandsJson}
       "Competitor1": [
         { "url": "https://competitor1.com/pillar1", "title": "Pillar Competitor 1", "reason": "Analisi del perché questo pillar competitor è efficace e cosa possiamo imparare dalla sua struttura" },
         { "url": "https://competitor1.com/pillar2", "title": "Pillar Competitor 2", "reason": "Secondo pillar competitor: punti di forza e opportunità di emulazione strategica" }
-      ],
-      "Competitor2": [
-        { "url": "https://competitor2.com/pillar1", "title": "Pillar Competitor 1", "reason": "Primo pillar competitor 2: elementi distintivi da considerare nella strategia editoriale" },
-        { "url": "https://competitor2.com/pillar2", "title": "Pillar Competitor 2", "reason": "Secondo pillar competitor 2: insights strategici per il focus brand" }
       ]
     },
     "key_insights": [
@@ -198,8 +187,7 @@ ${brandsJson}
           "Angolo di attacco 3 suggerito"
         ],
         "proof_points": [
-          { "brand": "Competitor1", "title": "Esempio articolo competitor 1 che dimostra l'opportunità" },
-          { "brand": "Competitor2", "title": "Esempio articolo competitor 2 che dimostra l'opportunità" }
+          { "brand": "Competitor1", "title": "Esempio articolo competitor 1 che dimostra l'opportunità" }
         ]
       },
       {
@@ -212,8 +200,7 @@ ${brandsJson}
           "Angolo di attacco 2"
         ],
         "proof_points": [
-          { "brand": "Competitor1", "title": "Proof point competitor 1" },
-          { "brand": "Competitor2", "title": "Proof point competitor 2" }
+          { "brand": "Competitor1", "title": "Proof point competitor 1" }
         ]
       },
       {
@@ -239,7 +226,7 @@ ${brandsJson}
           "Angolo di attacco 2"
         ],
         "proof_points": [
-          { "brand": "Competitor2", "title": "Proof point competitor 2" }
+          { "brand": "Competitor1", "title": "Proof point competitor 1" }
         ]
       }
     ],
@@ -262,6 +249,7 @@ ${brandsJson}
 8) tab3_dual_clustering deve essere null (non implementato)
 9) URL presenti SOLO nei pillar_candidates; drilldown_articles NON hanno URL
 10) proof_points nei gap NON hanno URL (solo brand e title)
+11) ANALISI 2 BRAND: Focus + 1 Competitor (NON 3)
 
 📝 NOTA IMPORTANTE:
 - drilldown_articles: includi articoli di TUTTI i brand (focus + competitor)
@@ -269,13 +257,14 @@ ${brandsJson}
 - Gap theme_gaps: MAX 2 gaps
 - Opportunità: MAX 4, ordinate per rank (1, 2, 3, 4)
 - Insights: lunghi e comprensibili (≈250 parole), NO stile Yoda
-- Limite articoli: 500 per brand (non 400)
+- Limite articoli: 400 per brand (non 500)
+- Numero brand: 2 (Focus + 1 Competitor)
 
 🚀 Genera ora l'analisi completa in formato JSON.
 `;
 
     // 5) Chiamata a Gemini (UNA SOLA CHIAMATA, come versione OLD)
-    console.log('🔮 Inizio analisi con Gemini 2.5 Flash (LIMITE 500 ARTICOLI)...');
+    console.log('🔮 Inizio analisi con Gemini 2.5 Flash (LIMITE 400 ARTICOLI, 2 BRAND)...');
     
     const model = ai.models.generateContent({
       model: 'gemini-2.5-flash',
@@ -305,7 +294,7 @@ ${brandsJson}
       
       // 7) Gestione errori specifici
       if (text.toLowerCase().includes('too many') || text.toLowerCase().includes('troppi')) {
-        throw new Error('⚠️ Troppi dati generati o formato invalido. Riprova con meno articoli (LIMITE 500 per brand).');
+        throw new Error('⚠️ Troppi dati generati o formato invalido. Riprova con meno articoli (LIMITE 400 per brand).');
       }
       
       if (text.toLowerCase().includes('not found') || text.includes('404')) {
