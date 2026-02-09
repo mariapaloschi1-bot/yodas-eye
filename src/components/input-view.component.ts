@@ -227,7 +227,7 @@ export class InputViewComponent {
            this.apiKey.length > 10 &&
            this.focusBrandName && 
            this.focusBrandData && 
-           this.competitors().every(c => c.name && c.data);
+           this.competitors().filter(c => c.name.trim() && c.data.trim()).length > 0;
   }
 
   loadSampleData() {
